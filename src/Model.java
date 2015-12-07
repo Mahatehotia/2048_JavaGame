@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by evanzyker on 24/11/15.
@@ -13,19 +10,21 @@ public class Model {
     private int[] valuesCase = {0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
     private boolean playable;
     private Hashtable<Integer, Integer> toWin;
+    private int score;
 
 
 
     public Model(int gridSize){
-        toWin = new Hashtable<>();
+        playable = true;
+        /*toWin = new Hashtable<>();
         toWin.put(4, 2048);
         toWin.put(5, 4096);
-        toWin.put(6, 8192);
+        toWin.put(6, 8192); */
         this.gridSize = gridSize;
         grid = new int[this.gridSize][this.gridSize];
         for (int i = 0; i < this.gridSize; i++){
             for (int j = 0; j < this.gridSize; j++){
-                grid[i][j] = 0;
+                grid[i][j] = 2048;
             }
         }
         addOne();
@@ -78,6 +77,7 @@ public class Model {
                 }
                 break;
         }
+        autoSetPlayable();
     }
 
     private void addOne() {
@@ -204,7 +204,7 @@ public class Model {
     }
 
     private void autoSetPlayable(){
-        playable = checkGrid();
+        playable = !checkGrid();
     }
 
     public boolean isPlayable(){
@@ -226,8 +226,9 @@ public class Model {
     public boolean hasWon(){
         int best = getHighest();
             if (toWin.containsKey(gridSize)){
-                while (toWin.keys().hasMoreElements()){
-                    int taille = toWin.keys().nextElement();
+                Enumeration<Integer> key = toWin.keys();
+                while (key.hasMoreElements()){
+                    int taille = key.nextElement();
                     if (gridSize == taille){
                         if (best == toWin.get(taille)){
                             return true;
@@ -236,5 +237,16 @@ public class Model {
                 }
             }
         return false;
+    }
+
+    public void setgridSize(int size) {
+        gridSize = size;
+        grid = new int[this.gridSize][this.gridSize];
+        for (int i = 0; i < this.gridSize; i++){
+            for (int j = 0; j < this.gridSize; j++){
+                grid[i][j] = 0;
+            }
+        }
+        addOne();
     }
 }

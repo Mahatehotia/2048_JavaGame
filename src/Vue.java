@@ -15,6 +15,15 @@ public class Vue extends JFrame {
     protected int row;
     protected int col;
 
+    public JMenuBar menuBar;
+    public JMenu option;
+    public JMenu size;
+    public JMenuItem sizeLow;
+    public JMenuItem sizeMedium;
+    public JMenuItem sizeBig;
+    public JMenuItem restart;
+    public JLabel score;
+
 
     public Vue(Model model){
         this.model = model;
@@ -30,14 +39,24 @@ public class Vue extends JFrame {
 
     private void placeWidget() {
         getContentPane().removeAll();
-
         JPanel masterPanel = new JPanel(new BorderLayout());
         JPanel gridPanel = new JPanel(new GridLayout(model.getGridSize(), model.getGridSize()));
+
         for (int r = 0; r < row; r++){
             for (int c = 0; c < col; c++){
                 gridPanel.add(grid[r][c]);
             }
         }
+
+        size.add(sizeLow);
+        size.add(sizeMedium);
+        size.add(sizeBig);
+        option.add(size);
+        option.add(restart);
+        menuBar.add(option);
+
+        setJMenuBar(menuBar);
+
 
         masterPanel.add(gridPanel, BorderLayout.CENTER);
         setContentPane(masterPanel);
@@ -65,6 +84,14 @@ public class Vue extends JFrame {
                 grid[i][j] = new JLabel(String.valueOf(model.getCase(i, j)), SwingConstants.CENTER);
             }
         }
+
+        menuBar = new JMenuBar();
+        option = new JMenu("Options");
+        size = new JMenu("Taille de la grille");
+        sizeLow = new JMenuItem("Petite");
+        sizeMedium = new JMenuItem("Moyenne");
+        sizeBig = new JMenuItem("Grande");
+        restart = new JMenuItem("Recommencer");
     }
 
     public void setControlKey(ControlKey controlkey) {
@@ -127,15 +154,34 @@ public class Vue extends JFrame {
                 grid[r][c].setOpaque(true);
             }
         }
-        if (! model.isPlayable()){
+        /*
+        if (!model.isPlayable()){
+            JOptionPane message = new JOptionPane();
             if (model.hasWon()){
-                JOptionPane.showMessageDialog( this, "Vous avez gagné !", "VICTOIRE",
-                        JOptionPane.WARNING_MESSAGE );
+                message.showMessageDialog(this, "Vous avez gagné !", "VICTOIRE",
+                        JOptionPane.WARNING_MESSAGE);
             }else{
-                JOptionPane.showMessageDialog( this, "Vous avez perdu !", "DEFAITE",
-                        JOptionPane.WARNING_MESSAGE );
+                message.showMessageDialog(this, "Vous avez perdu !", "DEFAITE",
+                        JOptionPane.WARNING_MESSAGE);
             }
-        }
+        } */
     }
 
+    public void setControlMenu(ControlMenu cm) {
+        sizeLow.addActionListener(cm);
+        sizeMedium.addActionListener(cm);
+        sizeBig.addActionListener(cm);
+        restart.addActionListener(cm);
+    }
+
+    public void redraw() {
+        initAttributes(this.model.getGridSize());
+        createWidget(this.model.getGridSize());
+        placeWidget();
+        refresh();
+        setSize(new Dimension(400, 400));
+        setVisible(true);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
 }
